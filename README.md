@@ -30,21 +30,6 @@ use.similarity("gato preto correu", "o gato preto correu pelo jardim")
 > The package is distributed as `fast-universal-sentence-encoder`; the import
 > name is `usem3`.
 
-## Releasing
-
-Publishing is automatic via GitHub Actions (`.github/workflows/publish.yml`):
-tag a commit with `v*` (e.g. `git tag v0.1.0 && git push --tags`) and the
-workflow runs the test matrix on linux amd64/arm64, Windows x64, macOS Apple
-Silicon and macOS Intel, then builds the sdist + universal wheel and uploads it
-to PyPI. The version is taken from the tag.
-
-Prerequisites once:
-
-1. Create a PyPI API token
-   (https://pypi.org/manage/account/token/), scoped to the project.
-2. In the GitHub repo: **Settings → Environments → New environment** named
-   `pypi`, and add the token as a secret named `PYPI_TOKEN`.
-
 ### Number denoising
 
 USE embeddings are sensitive to number tokens: two sentences that differ only in
