@@ -71,6 +71,57 @@ def test_denoise_normalizes_numbers():
     assert float(np.dot(v0, v1) / (np.linalg.norm(v0) * np.linalg.norm(v1))) > 0.999
 
 
+def test_batching_does_not_change_embeddings():
+    """The flat micro-batch must give each sentence its own embedding."""
+    from usem3.backends.numpy import _TOKEN_BUDGET
+
+    use = USE()
+    texts = [
+        "o gato preto correu pelo jardim",
+        "x",
+        "investir em renda fixa é seguro mas o retorno é baixo",
+        "the quick brown fox jumps over the lazy dog",
+        "東京の天気は明日は雨になるでしょう",
+        "",
+        "  espaços    irregulares\te tabs\n",
+        # more tokens than one micro-batch holds, so it forms a batch of its own
+        "palavra " * (_TOKEN_BUDGET * 2),
+    ]
+    one = np.stack([use.encode(t) for t in texts])
+    batched = use.encode(texts)
+    assert np.allclose(one, batched, atol=1e-5)
+
+    # order must not matter either
+    order = [3, 0, 7, 5, 2, 6, 1, 4]
+    shuffled = use.encode([texts[i] for i in order])
+    assert np.allclose(shuffled, batched[order], atol=1e-5)
+
+
+def test_many_short_texts_cross_micro_batches():
+    use = USE()
+    texts = ["frase número %d" % i for i in range(200)]
+    vecs = use.encode(texts)
+    assert vecs.shape == (200, 512)
+    assert vecs.dtype == np.float32
+    assert np.allclose(np.linalg.norm(vecs, axis=1), 1.0, atol=1e-4)
+    assert np.allclose(vecs[7], use.encode(texts[7]), atol=1e-5)
+
+
+def test_tokenizer_prefix_walk():
+    """The flat prefix table must expose exactly the vocabulary pieces."""
+    use = USE()
+    tok = use._tokenizer
+    s = tok._normalizer.normalize("o gato preto correu")
+    for i in range(len(s)):
+        for length, pid in tok._trie_prefixes(s, i):
+            assert tok._pieces[pid] == s[i:i + length]
+    ids = tok.encode("o gato preto correu", out_type=int, add_bos=True, add_eos=True)
+    pieces = tok.encode("o gato preto correu", out_type=str, add_bos=False, add_eos=False)
+    assert ids[0] == 1 and ids[-1] == 2
+    assert [tok._pieces[i] for i in ids[1:-1]] == pieces
+    assert "".join(pieces) == s
+
+
 if __name__ == "__main__":
     test_basic_encode()
     test_denoise_on_backend()
@@ -79,4 +130,7 @@ if __name__ == "__main__":
     test_similarity_shape()
     test_callable()
     test_denoise_normalizes_numbers()
+    test_batching_does_not_change_embeddings()
+    test_many_short_texts_cross_micro_batches()
+    test_tokenizer_prefix_walk()
     print("all tests passed")
