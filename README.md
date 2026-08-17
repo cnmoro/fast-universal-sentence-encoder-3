@@ -24,7 +24,7 @@ vec = use.encode("o gato preto correu pelo jardim")   # (512,) L2-normalized
 vecs = use.encode(["a menina lê um livro", "investir em renda fixa é seguro"])  # (2, 512)
 
 use.similarity("gato preto correu", "o gato preto correu pelo jardim")
-# 0.53
+# 0.82
 ```
 
 > The package is distributed as `fast-universal-sentence-encoder`; the import
