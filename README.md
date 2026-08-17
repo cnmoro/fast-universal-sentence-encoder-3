@@ -69,19 +69,8 @@ the embeddings; enable it when your corpus mixes quantities. See
   followed by a residual DNN, trained multi-task across 16 languages.
 - **Output**: 512-dim, L2-normalized sentence embeddings.
 - **Languages**: ar, de, en, es, fr, it, ja, ko, nl, pl, pt, ru, th, tr, zh, zh-TW.
-- **Source weights**: `WiseIntelligence/universal-sentence-encoder-multilingual-3-onnx-quantized`
-  (quantized from the original Google TF model), dequantized and repacked here.
 - **Size**: the package is ~33 MB (the embedding table is stored 6-bit-quantized
-  per chunk, which halves it with no measurable quality loss; ASSIN2 spearman
-  0.6906 vs 0.6899 for the full float32 table).
-
-## Benchmarks (pt-br, ASSIN2 STS test, 2448 pairs)
-
-| implementation | sent/s (per-sentence) | ASSIN2 spearman |
-|---|---|---|
-| original int8 onnx (MiniVectorDB) | ~750 | 0.698 |
-| usem3 numpy | ~430–500 | 0.69 |
-| static-nomic-384-pten-v2 (reference) | 36 000 | 0.614 |
+  per chunk, which halves it with no measurable quality loss).
 
 ## Files
 
