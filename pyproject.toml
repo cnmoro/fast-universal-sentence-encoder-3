@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "setuptools-scm[toml]>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fast-universal-sentence-encoder"
+description = "Fast, dependency-light Google USE multilingual v3 sentence embeddings (pure numpy, no C++ deps)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "Apache-2.0" }
+authors = [{ name = "cnmoro" }]
+keywords = ["embeddings", "sentence-transformers", "universal-sentence-encoder", "pt-br", "multilingual"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dynamic = ["version"]
+dependencies = [
+    "numpy>=1.22",
+]
+
+[project.optional-dependencies]
+fast = ["threadpoolctl>=3.1"]
+
+[project.urls]
+Repository = "https://github.com/cnmoro/fast-universal-sentence-encoder-3"
+
+[tool.setuptools]
+packages = ["usem3", "usem3.backends"]
+
+[tool.setuptools.package-data]
+usem3 = ["resources/*"]
+
+[tool.setuptools_scm]
+version_scheme = "guess-next-dev"
+fallback_version = "0.0.0"

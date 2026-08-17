@@ -1,0 +1,3 @@
+# Large model files are stored with Git LFS
+usem3/resources/*.npz filter=lfs diff=lfs merge=lfs -text
+usem3/resources/*.model filter=lfs diff=lfs merge=lfs -text
